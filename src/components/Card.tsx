@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import './Card.css';
 
 interface CardProps {
   onOpen: () => void;
 }
 
-export function Card({ onOpen }: CardProps) {
+export const Card = memo(function Card({ onOpen }: CardProps) {
   const [isOpening, setIsOpening] = useState(false);
   const [isOpened, setIsOpened] = useState(false);
 
@@ -59,4 +59,4 @@ export function Card({ onOpen }: CardProps) {
       </div>
     </div>
   );
-}
+});

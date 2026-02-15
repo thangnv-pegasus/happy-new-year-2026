@@ -8,6 +8,18 @@
   padding: 2rem;
 }
 
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 0.5rem;
+  }
+}
+
 .message-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -20,6 +32,7 @@
   opacity: 0;
   transform: translateY(30px);
   transition: all 1s ease-out;
+  will-change: transform, opacity;
 }
 
 .message-container.visible {
@@ -112,6 +125,12 @@
   box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
 }
 
+@media (hover: none) {
+  .wish-item:hover {
+    transform: none;
+  }
+}
+
 .wish-item .icon {
   font-size: 2rem;
 }
@@ -159,6 +178,68 @@
 
   .message p {
     font-size: 1rem;
+  }
+
+  .subtitle-container {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .heart {
+    font-size: 2.5rem;
+  }
+
+  .wish-item {
+    padding: 0.8rem;
+  }
+
+  .wish-item .icon {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-container {
+    padding: 1.5rem 1rem;
+    border-radius: 20px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .message {
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .message p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .wishes {
+    margin: 1.5rem 0;
+  }
+
+  .wish-item {
+    gap: 0.8rem;
+  }
+
+  .wish-item p {
+    font-size: 0.9rem;
+  }
+
+  .signature p {
+    font-size: 1rem;
+  }
+
+  .signature .date {
+    font-size: 0.8rem;
   }
 }
 

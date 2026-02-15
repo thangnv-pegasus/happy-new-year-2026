@@ -1,9 +1,11 @@
-import { useState } from 'react'
-import { Scene } from './components/Scene'
+import { useState, lazy, Suspense } from 'react'
 import { Card } from './components/Card'
-import { Confetti } from './components/Confetti'
-import { Fireworks2D } from './components/Fireworks2D'
 import './App.css'
+
+// Lazy load heavy components
+const Scene = lazy(() => import('./components/Scene').then(m => ({ default: m.Scene })))
+const Confetti = lazy(() => import('./components/Confetti').then(m => ({ default: m.Confetti })))
+const Fireworks2D = lazy(() => import('./components/Fireworks2D').then(m => ({ default: m.Fireworks2D })))
 
 function App() {
   const [cardOpened, setCardOpened] = useState(false)
@@ -19,15 +21,19 @@ function App() {
   return (
     <>
       {cardOpened && (
-        <>
+        <Suspense fallback={<div />}>
           <Scene />
           <Fireworks2D />
-        </>
+        </Suspense>
       )}
       
       {!cardOpened && <Card onOpen={handleCardOpen} />}
       
-      {showConfetti && <Confetti />}
+      {showConfetti && (
+        <Suspense fallback={<div />}>
+          <Confetti />
+        </Suspense>
+      )}
       
       {cardOpened && (
         <div className="content">

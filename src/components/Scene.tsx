@@ -2,11 +2,18 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import { PeachBlossoms, BlossomTree } from './PeachBlossom';
 import { Fireworks3D } from './Fireworks3D';
+import { memo } from 'react';
 
-export function Scene() {
+export const Scene = memo(function Scene() {
   return (
     <Canvas
       camera={{ position: [0, 2, 8], fov: 60 }}
+      gl={{ 
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance'
+      }}
+      dpr={[1, 2]} // Limit pixel ratio for better performance
       style={{
         position: 'fixed',
         top: 0,
@@ -46,4 +53,4 @@ export function Scene() {
       />
     </Canvas>
   );
-}
+});

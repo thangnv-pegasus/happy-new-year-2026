@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import './Confetti.css';
 
 interface Particle {
@@ -10,14 +10,18 @@ interface Particle {
   size: number;
 }
 
-export function Confetti() {
+export const Confetti = memo(function Confetti() {
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
     const colors = ['#ff6b9d', '#ffb7d5', '#ffd700', '#ff69b4', '#ff1493', '#ffc0cb'];
     const newParticles: Particle[] = [];
+    
+    // Reduce particles on mobile for better performance
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 50 : 100;
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < particleCount; i++) {
       newParticles.push({
         id: i,
         left: Math.random() * 100,
@@ -58,4 +62,4 @@ export function Confetti() {
       ))}
     </div>
   );
-}
+});

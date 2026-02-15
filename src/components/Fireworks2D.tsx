@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import './Fireworks2D.css';
 
 interface Particle {
@@ -28,14 +28,14 @@ interface Rocket {
   trail: { x: number; y: number }[];
 }
 
-export function Fireworks2D() {
+export const Fireworks2D = memo(function Fireworks2D() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
@@ -43,6 +43,11 @@ export function Fireworks2D() {
 
     const rockets: Rocket[] = [];
     const hues = [340, 0, 45, 60, 280, 320, 200, 180, 50];
+    
+    // Optimize for mobile
+    const isMobile = window.innerWidth < 768;
+    const particleMultiplier = isMobile ? 0.6 : 1;
+    const frequencyMultiplier = isMobile ? 1.5 : 1;
 
     let lastRocketTime = 0;
 
@@ -71,7 +76,8 @@ export function Fireworks2D() {
     };
 
     const createExplosion = (rocket: Rocket) => {
-      const particleCount = rocket.type === 'burst' ? 150 : 100;
+      const baseCount = rocket.type === 'burst' ? 150 : 100;
+      const particleCount = Math.floor(baseCount * particleMultiplier);
       
       for (let i = 0; i < particleCount; i++) {
         let angle, speed, vx, vy;
@@ -149,8 +155,10 @@ export function Fireworks2D() {
       ctx.fillStyle = 'rgba(26, 10, 31, 0.2)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Create new rockets
-      if (currentTime - lastRocketTime > 400 + Math.random() * 600) {
+      // Create new rockets (less frequent on mobile)
+      const minInterval = 400 * frequencyMultiplier;
+      const maxInterval = 600 * frequencyMultiplier;
+      if (currentTime - lastRocketTime > minInterval + Math.random() * maxInterval) {
         rockets.push(createRocket());
         lastRocketTime = currentTime;
       }
@@ -274,9 +282,14 @@ export function Fireworks2D() {
 
     const animationId = requestAnimationFrame(animate);
 
+    // Debounced resize handler
+    let resizeTimeout: number;
     const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(() => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }, 250);
     };
 
     window.addEventListener('resize', handleResize);
@@ -284,8 +297,9 @@ export function Fireworks2D() {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
     };
   }, []);
 
   return <canvas ref={canvasRef} className="fireworks-2d-canvas" />;
-}
+});
