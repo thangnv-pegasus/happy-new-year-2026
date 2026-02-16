@@ -24,7 +24,8 @@ interface Rocket {
   exploded: boolean;
   particles: Particle[];
   type: 'chrysanthemum' | 'willow' | 'palm' | 'ring' | 'burst' | 'heart' | 'star' | 'spiral' | 'double-ring' | 'wave' | 
-        'diamond' | 'butterfly' | 'crescent' | 'crosshair' | 'flower' | 'helix' | 'saturn' | 'smile' | 'infinity' | 'lightning';
+        'diamond' | 'butterfly' | 'crescent' | 'crosshair' | 'flower' | 'helix' | 'saturn' | 'smile' | 'infinity' | 'lightning' |
+        'happy-new-year' | '2026';
   brightness: number;
   trail: { x: number; y: number }[];
 }
@@ -57,12 +58,13 @@ export const Fireworks2D = memo(function Fireworks2D() {
         'chrysanthemum', 'willow', 'palm', 'ring', 'burst', 
         'heart', 'star', 'spiral', 'double-ring', 'wave',
         'diamond', 'butterfly', 'crescent', 'crosshair', 'flower',
-        'helix', 'saturn', 'smile', 'infinity', 'lightning'
+        'helix', 'saturn', 'smile', 'infinity', 'lightning',
+        'happy-new-year', '2026'
       ];
       // Launch from left or right side - spread more to the edges
       const fromLeft = Math.random() < 0.5;
       const xStart = fromLeft ? canvas.width * (0.02 + Math.random() * 0.15) : canvas.width * (0.83 + Math.random() * 0.15);
-      const targetX = fromLeft ? canvas.width * (0.15 + Math.random() * 0.35) : canvas.width * (0.5 + Math.random() * 0.35);
+      const targetX = fromLeft ? canvas.width * (0.1 + Math.random() * 0.25) : canvas.width * (0.65 + Math.random() * 0.25);
       const vx = (targetX - xStart) / 100;
       
       const rocket: Rocket = {
@@ -81,9 +83,52 @@ export const Fireworks2D = memo(function Fireworks2D() {
       return rocket;
     };
 
+    // Helper function to create text patterns
+    const getTextPattern = (text: string): { x: number; y: number }[] => {
+      const points: { x: number; y: number }[] = [];
+      const canvas2d = document.createElement('canvas');
+      const ctx2d = canvas2d.getContext('2d');
+      if (!ctx2d) return points;
+      
+      canvas2d.width = 600;
+      canvas2d.height = 150;
+      ctx2d.font = '70px Arial';
+      ctx2d.fillStyle = 'white';
+      ctx2d.textAlign = 'center';
+      ctx2d.textBaseline = 'middle';
+      ctx2d.fillText(text, 300, 75);
+      
+      const imageData = ctx2d.getImageData(0, 0, canvas2d.width, canvas2d.height);
+      const step = 5; // Sample every 5 pixels for thinner text
+      
+      for (let y = 0; y < canvas2d.height; y += step) {
+        for (let x = 0; x < canvas2d.width; x += step) {
+          const index = (y * canvas2d.width + x) * 4;
+          if (imageData.data[index + 3] > 128) { // Check alpha
+            points.push({
+              x: (x - 300) * 0.08, // Larger scale for bigger text
+              y: (y - 75) * 0.08
+            });
+          }
+        }
+      }
+      
+      return points;
+    };
+
     const createExplosion = (rocket: Rocket) => {
-      const baseCount = rocket.type === 'burst' ? 150 : rocket.type === 'heart' || rocket.type === 'star' ? 80 : 100;
+      const baseCount = rocket.type === 'burst' ? 150 : 
+                       (rocket.type === 'heart' || rocket.type === 'star') ? 80 : 
+                       (rocket.type === 'happy-new-year' || rocket.type === '2026') ? 300 : 100;
       const particleCount = Math.floor(baseCount * particleMultiplier);
+      
+      // Pre-generate text patterns for text-based fireworks
+      let textPattern: { x: number; y: number }[] = [];
+      if (rocket.type === 'happy-new-year') {
+        textPattern = getTextPattern('HAPPY NEW YEAR');
+      } else if (rocket.type === '2026') {
+        textPattern = getTextPattern('2026');
+      }
       
       for (let i = 0; i < particleCount; i++) {
         let angle, speed, vx, vy;
@@ -173,6 +218,8 @@ export const Fireworks2D = memo(function Fireworks2D() {
             speed = 3 + Math.random();
             vx = Math.cos(angle) * speed;
             vy = Math.sin(angle) * speed + waveAmplitude;
+            break;
+            
           case 'diamond':
             // Diamond/rhombus shape
             const diamondT = (i / particleCount) * 4;
@@ -269,6 +316,33 @@ export const Fireworks2D = memo(function Fireworks2D() {
             vy = -4 + ltSegment * 0.8 + ltPos * 0.8;
             break;
             
+          case 'happy-new-year':
+            // Text: HAPPY NEW YEAR
+            if (i < textPattern.length) {
+              const point = textPattern[i];
+              vx = point.x * 0.6;
+              vy = point.y * 0.6;
+            } else {
+              // Fill with random particles if we need more
+              angle = Math.random() * Math.PI * 2;
+              speed = Math.random() * 2;
+              vx = Math.cos(angle) * speed;
+              vy = Math.sin(angle) * speed;
+            }
+            break;
+            
+          case '2026':
+            // Text: 2026
+            if (i < textPattern.length) {
+              const point = textPattern[i];
+              vx = point.x * 0.6;
+              vy = point.y * 0.6;
+            } else {
+              angle = Math.random() * Math.PI * 2;
+              speed = Math.random() * 2;
+              vx = Math.cos(angle) * speed;
+              vy = Math.sin(angle) * speed;
+            }
             break;
             
           default:
@@ -287,8 +361,11 @@ export const Fireworks2D = memo(function Fireworks2D() {
           alpha: 1,
           brightness: rocket.brightness,
           trail: [],
-          gravity: rocket.type === 'willow' ? 0.15 : rocket.type === 'palm' ? 0.2 : 0.1,
-          friction: rocket.type === 'willow' ? 0.96 : 0.98,
+          gravity: rocket.type === 'willow' ? 0.15 : 
+                   rocket.type === 'palm' ? 0.2 : 
+                   (rocket.type === 'happy-new-year' || rocket.type === '2026') ? 0.02 : 0.1,
+          friction: rocket.type === 'willow' ? 0.96 : 
+                   (rocket.type === 'happy-new-year' || rocket.type === '2026') ? 0.99 : 0.98,
           hue: hueVariation,
         };
         
