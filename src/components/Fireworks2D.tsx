@@ -23,7 +23,8 @@ interface Rocket {
   hue: number;
   exploded: boolean;
   particles: Particle[];
-  type: 'chrysanthemum' | 'willow' | 'palm' | 'ring' | 'burst';
+  type: 'chrysanthemum' | 'willow' | 'palm' | 'ring' | 'burst' | 'heart' | 'star' | 'spiral' | 'double-ring' | 'wave' | 
+        'diamond' | 'butterfly' | 'crescent' | 'crosshair' | 'flower' | 'helix' | 'saturn' | 'smile' | 'infinity' | 'lightning';
   brightness: number;
   trail: { x: number; y: number }[];
 }
@@ -52,7 +53,12 @@ export const Fireworks2D = memo(function Fireworks2D() {
     let lastRocketTime = 0;
 
     const createRocket = () => {
-      const types: Rocket['type'][] = ['chrysanthemum', 'willow', 'palm', 'ring', 'burst'];
+      const types: Rocket['type'][] = [
+        'chrysanthemum', 'willow', 'palm', 'ring', 'burst', 
+        'heart', 'star', 'spiral', 'double-ring', 'wave',
+        'diamond', 'butterfly', 'crescent', 'crosshair', 'flower',
+        'helix', 'saturn', 'smile', 'infinity', 'lightning'
+      ];
       // Launch from left or right side - spread more to the edges
       const fromLeft = Math.random() < 0.5;
       const xStart = fromLeft ? canvas.width * (0.02 + Math.random() * 0.15) : canvas.width * (0.83 + Math.random() * 0.15);
@@ -76,7 +82,7 @@ export const Fireworks2D = memo(function Fireworks2D() {
     };
 
     const createExplosion = (rocket: Rocket) => {
-      const baseCount = rocket.type === 'burst' ? 150 : 100;
+      const baseCount = rocket.type === 'burst' ? 150 : rocket.type === 'heart' || rocket.type === 'star' ? 80 : 100;
       const particleCount = Math.floor(baseCount * particleMultiplier);
       
       for (let i = 0; i < particleCount; i++) {
@@ -122,6 +128,147 @@ export const Fireworks2D = memo(function Fireworks2D() {
             speed = Math.random() * 6;
             vx = Math.cos(angle) * speed;
             vy = Math.sin(angle) * speed;
+            break;
+            
+          case 'heart':
+            // Heart shape using parametric equations
+            const t = (i / particleCount) * Math.PI * 2;
+            const heartX = 16 * Math.pow(Math.sin(t), 3);
+            const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            const scale = 0.15 + Math.random() * 0.1;
+            vx = heartX * scale;
+            vy = heartY * scale;
+            break;
+            
+          case 'star':
+            // 5-pointed star
+            const starAngle = (i / particleCount) * Math.PI * 2;
+            const isPoint = Math.floor(i / (particleCount / 10)) % 2 === 0;
+            const starRadius = isPoint ? 4 + Math.random() : 2 + Math.random();
+            vx = Math.cos(starAngle) * starRadius;
+            vy = Math.sin(starAngle) * starRadius;
+            break;
+            
+          case 'spiral':
+            // Spiral galaxy effect
+            const spiralAngle = (i / particleCount) * Math.PI * 4;
+            const spiralRadius = (i / particleCount) * 5;
+            vx = Math.cos(spiralAngle) * spiralRadius;
+            vy = Math.sin(spiralAngle) * spiralRadius;
+            break;
+            
+          case 'double-ring':
+            // Two concentric rings
+            angle = (Math.PI * 2 * i) / particleCount;
+            const isOuter = i % 2 === 0;
+            const ringRadius = isOuter ? 4 : 2.5;
+            vx = Math.cos(angle) * ringRadius;
+            vy = Math.sin(angle) * ringRadius;
+            break;
+            
+          case 'wave':
+            // Wave pattern
+            angle = (Math.PI * 2 * i) / particleCount;
+            const waveAmplitude = Math.sin(angle * 3) * 2;
+            speed = 3 + Math.random();
+            vx = Math.cos(angle) * speed;
+            vy = Math.sin(angle) * speed + waveAmplitude;
+          case 'diamond':
+            // Diamond/rhombus shape
+            const diamondT = (i / particleCount) * 4;
+            if (diamondT < 1) {
+              vx = diamondT * 4;
+              vy = diamondT * 2;
+            } else if (diamondT < 2) {
+              vx = (2 - diamondT) * 4;
+              vy = diamondT * 2;
+            } else if (diamondT < 3) {
+              vx = (diamondT - 2) * -4;
+              vy = (4 - diamondT) * 2;
+            } else {
+              vx = (4 - diamondT) * -4;
+              vy = (4 - diamondT) * 2;
+            }
+            break;
+            
+          case 'butterfly':
+            // Butterfly wings
+            const butterflyT = (i / particleCount) * Math.PI * 2;
+            const r = Math.sin(butterflyT * 2) * 3;
+            vx = r * Math.cos(butterflyT);
+            vy = r * Math.sin(butterflyT);
+            break;
+            
+          case 'crescent':
+            // Crescent moon
+            const crescentAngle = (i / particleCount) * Math.PI * 1.5 - Math.PI * 0.75;
+            const crescentR = 3 + Math.cos(crescentAngle) * 1.5;
+            vx = Math.cos(crescentAngle) * crescentR;
+            vy = Math.sin(crescentAngle) * crescentR;
+            break;
+            
+          case 'crosshair':
+            // Plus/cross pattern
+            const crossSection = Math.floor((i / particleCount) * 4);
+            const crossPos = (i % (particleCount / 4)) / (particleCount / 4) * 5;
+            if (crossSection === 0) { vx = crossPos; vy = 0; }
+            else if (crossSection === 1) { vx = -crossPos; vy = 0; }
+            else if (crossSection === 2) { vx = 0; vy = crossPos; }
+            else { vx = 0; vy = -crossPos; }
+            break;
+            
+          case 'flower':
+            // Flower petals (rose pattern)
+            const flowerT = (i / particleCount) * Math.PI * 2;
+            const flowerR = 3 * Math.cos(flowerT * 5);
+            vx = flowerR * Math.cos(flowerT);
+            vy = flowerR * Math.sin(flowerT);
+            break;
+            
+          case 'helix':
+            // DNA helix / double spiral
+            const helixAngle = (i / particleCount) * Math.PI * 6;
+            const helixRadius = 2 + Math.sin(helixAngle) * 1.5;
+            const helixHeight = (i / particleCount) * 8 - 4;
+            vx = Math.cos(helixAngle) * helixRadius;
+            vy = helixHeight;
+            break;
+            
+          case 'saturn':
+            // Saturn with rings
+            angle = (Math.PI * 2 * i) / particleCount;
+            const isSaturnRing = Math.abs(Math.sin(angle)) < 0.3;
+            const saturnR = isSaturnRing ? 4 + Math.random() : 2 + Math.random();
+            vx = Math.cos(angle) * saturnR;
+            vy = Math.sin(angle) * saturnR * (isSaturnRing ? 0.3 : 1);
+            break;
+            
+          case 'smile':
+            // Smiley face
+            const smileT = (i / particleCount) * Math.PI * 2;
+            const isSmile = smileT > Math.PI * 0.2 && smileT < Math.PI * 0.8;
+            const smileR = isSmile ? 3 + Math.sin((smileT - Math.PI * 0.2) * 3) * 0.5 : 3.5;
+            vx = Math.cos(smileT) * smileR;
+            vy = Math.sin(smileT) * smileR + (isSmile ? 1 : 0);
+            break;
+            
+          case 'infinity':
+            // Infinity symbol (lemniscate)
+            const infT = (i / particleCount) * Math.PI * 2;
+            const infScale = 3 / (1 + Math.sin(infT) * Math.sin(infT));
+            vx = infScale * Math.cos(infT);
+            vy = infScale * Math.sin(infT) * Math.cos(infT);
+            break;
+            
+          case 'lightning':
+            // Lightning bolt zigzag
+            const ltSegment = Math.floor((i / particleCount) * 8);
+            const ltPos = (i % (particleCount / 8)) / (particleCount / 8);
+            const ltZig = (ltSegment % 2 === 0 ? 1 : -1) * 2;
+            vx = ltZig + (Math.random() - 0.5) * 0.5;
+            vy = -4 + ltSegment * 0.8 + ltPos * 0.8;
+            break;
+            
             break;
             
           default:
@@ -230,7 +377,7 @@ export const Fireworks2D = memo(function Fireworks2D() {
               particle.vy += particle.gravity;
               particle.x += particle.vx;
               particle.y += particle.vy;
-              particle.alpha -= 0.025;
+              particle.alpha -= 0.012;
 
               // Draw particle trail
               ctx.lineCap = 'round';

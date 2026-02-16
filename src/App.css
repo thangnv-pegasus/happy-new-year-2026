@@ -49,6 +49,26 @@
   background-clip: text;
   margin-bottom: 1rem;
   animation: titleGlow 2s ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.8s ease-out;
+}
+
+.title.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+  animation: titleGlow 2s ease-in-out infinite, slideInDown 0.8s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes titleGlow {
@@ -87,12 +107,31 @@
   font-weight: 600;
 }
 
+.subtitle-container {
+  opacity: 0;
+  transform: translateY(-15px);
+  transition: all 0.8s ease-out 0.3s;
+}
+
+.subtitle-container.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .message {
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.2) 0%, rgba(255, 192, 203, 0.3) 100%);
   padding: 1.5rem;
   border-radius: 15px;
   margin: 2rem 0;
   border-left: 4px solid #ff6b9d;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.6s ease-out 0.6s;
+}
+
+.message.animate-in {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .message p {
@@ -101,6 +140,23 @@
   line-height: 1.8;
   margin: 0.5rem 0;
   font-style: italic;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  color: #ff6b9d;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 .wishes {
@@ -118,6 +174,23 @@
   padding: 1rem;
   border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.wishes.show .wish-item {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .wish-item:hover {
@@ -147,6 +220,14 @@
   padding-top: 1.5rem;
   border-top: 2px solid rgba(255, 182, 193, 0.3);
   text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-out;
+}
+
+.signature.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .signature p {
