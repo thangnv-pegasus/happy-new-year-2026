@@ -22,6 +22,16 @@ body {
   overflow-x: hidden;
   background: linear-gradient(135deg, #1a0a1f 0%, #2d1b3d 50%, #1a0a1f 100%);
   position: relative;
+  animation: backgroundPulse 10s ease-in-out infinite;
+}
+
+@keyframes backgroundPulse {
+  0%, 100% {
+    background: linear-gradient(135deg, #1a0a1f 0%, #2d1b3d 50%, #1a0a1f 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #0f0515 0%, #3d2050 50%, #0f0515 100%);
+  }
 }
 
 body::before {
@@ -33,11 +43,31 @@ body::before {
   height: 200%;
   background: radial-gradient(
     circle,
-    rgba(255, 182, 193, 0.05) 0%,
-    transparent 50%
+    rgba(255, 182, 193, 0.08) 0%,
+    rgba(255, 105, 180, 0.05) 30%,
+    transparent 70%
   );
   animation: backgroundRotate 30s linear infinite;
   z-index: -1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 182, 193, 0.03) 2px,
+    rgba(255, 182, 193, 0.03) 4px
+  );
+  animation: scanlines 8s linear infinite;
+  z-index: -1;
+  pointer-events: none;
 }
 
 @keyframes backgroundRotate {
@@ -46,6 +76,15 @@ body::before {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes scanlines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
   }
 }
 

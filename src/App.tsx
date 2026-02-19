@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { Card } from './components/Card'
+import { FloatingElements } from './components/FloatingElements'
 import { useTypewriter } from './hooks/useTypewriter'
 import './App.css'
 
@@ -33,6 +34,8 @@ function App() {
 
   return (
     <>
+      <FloatingElements />
+      
       {cardOpened && (
         <Suspense fallback={<div />}>
           <Scene />

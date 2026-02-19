@@ -90,24 +90,29 @@ export const Fireworks2D = memo(function Fireworks2D() {
       const ctx2d = canvas2d.getContext('2d');
       if (!ctx2d) return points;
       
+      // Optimized canvas size for text
       canvas2d.width = 600;
       canvas2d.height = 150;
-      ctx2d.font = '70px Arial';
+      
+      // Use bold font for better definition
+      ctx2d.font = 'bold 60px Arial';
       ctx2d.fillStyle = 'white';
       ctx2d.textAlign = 'center';
       ctx2d.textBaseline = 'middle';
+      
+      // Center the text properly
       ctx2d.fillText(text, 300, 75);
       
       const imageData = ctx2d.getImageData(0, 0, canvas2d.width, canvas2d.height);
-      const step = 5; // Sample every 5 pixels for thinner text
+      const step = 6; // Larger step for less dense text
       
       for (let y = 0; y < canvas2d.height; y += step) {
         for (let x = 0; x < canvas2d.width; x += step) {
           const index = (y * canvas2d.width + x) * 4;
           if (imageData.data[index + 3] > 128) { // Check alpha
             points.push({
-              x: (x - 300) * 0.08, // Larger scale for bigger text
-              y: (y - 75) * 0.08
+              x: (x - 300) * 0.2, // Larger scale for bigger fireworks text
+              y: (y - 75) * 0.2
             });
           }
         }
@@ -320,8 +325,8 @@ export const Fireworks2D = memo(function Fireworks2D() {
             // Text: HAPPY NEW YEAR
             if (i < textPattern.length) {
               const point = textPattern[i];
-              vx = point.x * 0.6;
-              vy = point.y * 0.6;
+              vx = point.x * 0.35;
+              vy = point.y * 0.35;
             } else {
               // Fill with random particles if we need more
               angle = Math.random() * Math.PI * 2;
@@ -335,8 +340,8 @@ export const Fireworks2D = memo(function Fireworks2D() {
             // Text: 2026
             if (i < textPattern.length) {
               const point = textPattern[i];
-              vx = point.x * 0.6;
-              vy = point.y * 0.6;
+              vx = point.x * 0.35;
+              vy = point.y * 0.35;
             } else {
               angle = Math.random() * Math.PI * 2;
               speed = Math.random() * 2;

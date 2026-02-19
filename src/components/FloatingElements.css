@@ -1,0 +1,123 @@
+.floating-elements-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-element {
+  position: absolute;
+  opacity: 0;
+  animation: floatUp linear infinite;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.sakura-petal {
+  position: absolute;
+  top: -50px;
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: petalFall linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+}
+
+@keyframes petalFall {
+  0% {
+    transform: translateY(0) rotate(0deg) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    transform: translateY(20vh) rotate(180deg) translateX(50px);
+  }
+  40% {
+    transform: translateY(40vh) rotate(360deg) translateX(-30px);
+  }
+  60% {
+    transform: translateY(60vh) rotate(540deg) translateX(40px);
+  }
+  80% {
+    transform: translateY(80vh) rotate(720deg) translateX(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(900deg) translateX(30px);
+    opacity: 0;
+  }
+}
+
+.twinkling-star {
+  position: absolute;
+  font-size: 0.8rem;
+  animation: twinkle ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5) rotate(180deg);
+  }
+}
+
+/* Additional sparkle effects */
+.floating-element:nth-child(3n) {
+  animation-timing-function: ease-in-out;
+}
+
+.floating-element:nth-child(3n+1) {
+  animation-timing-function: ease-in;
+}
+
+.floating-element:nth-child(3n+2) {
+  animation-timing-function: ease-out;
+}
+
+.sakura-petal:nth-child(2n) {
+  animation-duration: 10s;
+}
+
+.sakura-petal:nth-child(3n) {
+  filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.7));
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floating-element {
+    font-size: 1rem !important;
+  }
+  
+  .sakura-petal {
+    font-size: 1.2rem;
+  }
+  
+  .twinkling-star {
+    font-size: 0.6rem;
+  }
+}
